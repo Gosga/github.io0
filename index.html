@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Умный подбор программы «Система Атак»</title>
+    <link href="https://googleapis.com" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- КВИЗ-ИНТЕРФЕЙС (Для обычных пользователей) -->
+<div class="quiz-container neon-glow-border" id="mainQuizContainer">
+    <div class="progress-header">
+        <span id="progressText" class="neon-text-status">Вопрос 1 из 11</span>
+    </div>
+    <div class="progress-container">
+        <div class="progress-bar neon-progress-glow" id="progressBar"></div>
+    </div>
+
+    <!-- Контейнер для динамического рендеринга шагов -->
+    <div id="quiz-screens-container" class="fade-in-active"></div>
+
+    <!-- ФИНАЛЬНЫЙ ЭКРАН РЕЗУЛЬТАТОВ -->
+    <div class="quiz-screen" id="resultScreen" style="display: none;">
+        <div class="final-premium-box neon-box-accent">
+            <span class="result-tag">Твой вектор тренинга:</span>
+            <h1 class="result-title matrix-text-glow" id="resProgramName">Название программы</h1>
+        </div>
+        
+        <!-- 🔥 ЖИВОЙ ИНТЕРАКТИВНЫЙ БЛОК ВВОДА ПМ НА ЭКРАНЕ РЕЗУЛЬТАТОВ 🔥 -->
+        <div class="final-premium-box neon-box-border" id="finalWeightsInputBlock" style="text-align: left; border-color: var(--accent-color);">
+            <span class="recommendation-title" style="color: var(--accent-color);">🏋️‍♂️ АКТИВАЦИЯ КИЛОГРАММОВ ПРОГРАММЫ:</span>
+            <span class="recommendation-text" style="font-size: 13px; color: var(--text-main); display: block; margin-bottom: 15px;">
+                Введи свои максимумы ПМ (или макс. повторы для упражнений без веса), и таблица мгновенно рассчитает точные рабочие веса!
+            </span>
+            <div id="dynamicFinalInputsContainer" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"></div>
+        </div>
+
+        <div class="final-premium-box neon-box-border">
+            <span class="recommendation-title">📊 Индивидуальный тренировочный протокол:</span>
+            <div id="resProgramTable" class="neon-table-glow"></div>
+        </div>
+
+        <div class="final-premium-box neon-box-border">
+            <span class="recommendation-title" style="color: var(--text-muted);">⚠️ Тренировочный инструктаж тренера:</span>
+            <span class="recommendation-text" id="resDisclaimerText" style="white-space: pre-line; line-height: 1.6; font-size: 13px; color: var(--text-main);">Анализ адаптации ЦНС...</span>
+        </div>
+
+        <div class="commercial-block">
+            <button class="pay-btn neon-btn-flush" onclick="redirectToPayment()">📊 ПОЛУЧИТЬ ПОЛНЫЙ ПЛАН НА 30 ДНЕЙ ЗА 199 ₽</button>
+            <a href="https://t.me" class="small-cta-link neon-link-glow" target="_blank">[ Ссылка: На личную консультацию тренера ]</a>
+        </div>
+
+        <!-- 🔥 ИСПРАВЛЕННЫЙ ТРИГГЕР НАВИГАЦИИ: Функция изменена на modifyUserAnswersBackLocal() 🔥 -->
+        <div class="nav-actions" style="margin-top: 20px;">
+            <button class="back-btn" onclick="modifyUserAnswersBackLocal()">← Изменить ответы</button>
+        </div>
+    </div>
+</div>
+
+<!-- 🔥 УЛЬТИМАТИВНЫЙ СКРЫТЫЙ ПОДВАЛ В УГЛУ САЙТА ВНЕ СЛАЙДОВ 🔥 -->
+<div style="position: fixed; bottom: 15px; right: 20px; font-size: 10px; color: #11141c; user-select: none; z-index: 99999;">
+    <span style="cursor: pointer; opacity: 0.15; transition: opacity 0.3s;" onhover="this.style.opacity=1" onclick="handleSecretAdminClickLocal()">.система атак.</span>
+</div>
+
+<!-- ОКНО АВТОРИЗАЦИИ АДМИНКИ -->
+<div class="quiz-container neon-glow-border fade-in-active" id="adminAuthWindow" style="display: none; max-width: 450px; text-align: center;">
+    <h1 class="matrix-text-glow" style="color: var(--accent-color); font-size: 18px; margin-bottom: 15px;">🔒 SYSTEM ATTACK: ADMIN ACCESS</h1>
+    <span class="result-tag" style="margin-bottom: 20px;">Введи секретный ключ авторизации тренера:</span>
+    <input type="password" id="adminPasswordInput" class="pm-field" placeholder="••••••••" style="text-align: center; margin-bottom: 20px;">
+    <button class="pay-btn" onclick="verifyAdminPasswordLocal()">ОТКРЫТЬ СИСТЕМУ МАТРИЦЫ</button>
+    <div style="margin-top: 15px;"><a href="#" onclick="location.reload()" style="font-size: 11px; color: var(--text-muted);">Вернуться назад</a></div>
+</div>
+
+<!-- ЦЕНТР УПРАВЛЕНИЯ ТРЕНЕРА -->
+<div class="admin-panel-layout" id="trainerControlCenter" style="display: none;"></div>
+
+<!-- Подключаем Firebase Realtime Database SDK -->
+<script src="https://gstatic.com"></script>
+<script src="https://gstatic.com"></script>
+
+<!-- ТРИ ТВОИХ РАЗДЕЛЬНЫХ ФАЙЛА БАЗЫ ДАННЫХ УПРАЖНЕНИЙ -->
+<script src="ex-gym.js"></script>
+<script src="ex-home-weights.js"></script>
+<script src="ex-home-bodyweight.js"></script>
+
+<!-- ЯДРО КОНВЕЙЕРА И СТРУКТУРЫ КВИЗА -->
+<script src="steps-definitions.js"></script>
+<script src="pipe-core.js"></script>
+<script src="pipe-base-templates.js"></script>
+
+<!-- ПОДКЛЮЧЕНИЕ ЧИСТЫХ МОДУЛЕЙ-МОДИФИКАТОРОВ -->
+<script src="mesocycle/nutrition.js"></script>
+<script src="mesocycle-fix-overlay.js"></script>
+<script src="mesocycle/paywall-modal.js"></script>
+<script src="mod-goal.js"></script>
+<script src="mod-inventory.js"></script>
+<script src="mod-experience.js"></script>
+<script src="mod-spine.js"></script>
+<script src="mod-legs.js"></script>
+<script src="mod-plateau.js"></script>
+<script src="mod-duration.js"></script>
+<script src="mod-specialization.js"></script>
+<script src="mesocycle/mesocycle-core.js"></script>
+<script src="mesocycle/mesocycle-integration.js"></script>
+<script src="mesocycle/mesocycle-pdf-export.js"></script>
+<script src="mod-volume-balance.js"></script>
+<script>
+window.redirectToPayment = function() {
+    console.log("💳 [INLINE] Клик пойман напрямую из index.html");
+    if (typeof handleMesocyclePurchaseLocal === "function") {
+        handleMesocyclePurchaseLocal();
+    } else {
+        alert("Модуль мезоцикла не загрузился.");
+    }
+};
+console.log("✅ [INLINE-ФИКС]: redirectToPayment определена в index.html");
+</script>
+
+<!-- МОДУЛЬ УПРАВЛЕНИЯ АДМИН-ПАНЕЛЬЮ -->
+<script src="admin-panel.js"></script>
+<!-- ДВИЖОК ОТОБРАЖЕНИЯ ЭКРАНОВ КВИЗА -->
+<script src="quiz-core.js"></script>
+
+<script>
+let secretClickCount = 0;
+function handleSecretAdminClickLocal() {
+    secretClickCount++;
+    if (secretClickCount >= 5) {
+        secretClickCount = 0;
+        document.getElementById('mainQuizContainer').style.setProperty('display', 'none', 'important');
+        document.getElementById('adminAuthWindow').style.setProperty('display', 'block', 'important');
+        if (typeof loadAllDataFromFirebaseLocal === 'function') loadAllDataFromFirebaseLocal();
+    }
+}
+</script>
+</body>
+</html>
